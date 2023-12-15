@@ -4,6 +4,7 @@ dictionaryDefinitions: []
 dictionaries: []
 enableCompoundWords: enable
 words:
+  - santas
   - tailwindcss
 import: []
 ignoreWords: null
