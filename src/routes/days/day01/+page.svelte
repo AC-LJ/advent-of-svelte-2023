@@ -28,9 +28,19 @@
 	// test
 
 	// functions
+	function onButtonClick(event: PointerEvent, name?: string, tally?: number) {
+		name = name ?? "-";
+		tally = tally ?? 0;
+		console.log({ event, name, tally });
+		console.log({ data });
+		addPerson(name, tally);
+	}
+
 	function addPerson(name: string, tally: number) {
 		data.push({ name, tally });
-		$inspect(data);
+		// console.log({ name, tally });
+		// console.log(data);
+		// $inspect(data);
 	}
 
 	function scrubTally(event: InputEvent) {
@@ -48,7 +58,7 @@
 </script>
 
 <template lang="pug">
-	main.px-4.py-8
+	main.px-4.py-8.grid.grid-cols-1.gap-y-8
 		//- create simple grid
 		.grid.grid-cols-3
 			//- loop through data -- each datum is a row 
@@ -72,16 +82,29 @@
 							{rowIndex === 0 ? 'border-y' : 'border-b'}
 							{cellIndex === 2 ? 'border-x' : 'border-l'}`,
 						contentEditable="true",
-						disabled!="{ cellIndex !== 1 }",
+						disabled!="{ cellIndex === 2 }",
 						on:blur!=`{
 							(e) =>
 								data[rowIndex][key] = 
 									e?.target.textContent ? (Number(e.target.textContent ?? 0)) : 0
 						}`,
-						on:input!="{ scrubTally }",
+						on:input!="{ cellIndex === 1 ? scrubTally : null }",
 						on:keydown!=`{
 							(e) => 
 								e.key === up && e.preventDefault && data[rowIndex][key]++ ||
 								e.key === dn && e.preventDefault && data[rowIndex][key]--
 							}`
-					) { datum[key] ? datum[key] : status ?? "" }</template>
+					) { datum[key] !== undefined ? datum[key] : status ?? "" }
+
+		button(
+			class=`
+			border
+			border-white
+			max-w-fit
+			px-3
+			py-2
+			rounded-lg
+			hover:bg-blue-100/20
+		`,
+			on:click!="{ onButtonClick }"
+		) Add Person</template>
