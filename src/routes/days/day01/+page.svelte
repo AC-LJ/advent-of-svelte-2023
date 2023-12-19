@@ -33,6 +33,17 @@
 		$inspect(data);
 	}
 
+	function scrubTally(event: InputEvent) {
+		const el: HTMLButtonElement = event.target as HTMLButtonElement;
+		const text = el.textContent ?? "";
+		const scrubbed = text
+			.replace(/[^0-9-]/g, "")
+			.replace("--", "-")
+			.replace(/(\d+?)-/, "$1");
+		console.log(scrubbed);
+		el.textContent = scrubbed;
+	}
+
 	addPerson("John", 100);
 </script>
 
@@ -61,5 +72,16 @@
 							{rowIndex === 0 ? 'border-y' : 'border-b'}
 							{cellIndex === 2 ? 'border-x' : 'border-l'}`,
 						contentEditable="true",
-						disabled!="{ cellIndex !== 1 }"
+						disabled!="{ cellIndex !== 1 }",
+						on:blur!=`{
+							(e) =>
+								data[rowIndex][key] = 
+									e?.target.textContent ? (Number(e.target.textContent ?? 0)) : 0
+						}`,
+						on:input!="{ scrubTally }",
+						on:keydown!=`{
+							(e) => 
+								e.key === up && e.preventDefault && data[rowIndex][key]++ ||
+								e.key === dn && e.preventDefault && data[rowIndex][key]--
+							}`
 					) { datum[key] ? datum[key] : status ?? "" }</template>
